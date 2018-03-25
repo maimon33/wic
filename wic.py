@@ -63,16 +63,19 @@ def read_netstat(geo=False):
     list_of_ips = []
     list_of_ports = []
     for line in tcp_connections_cut:
-        if "tcp4" in line:
+        if "tcp4" or "tcp" in line:
             single_line = line.split()
-            forgien_ip_and_port = single_line[4]
-            forgien_ip = str.join('.', (forgien_ip_and_port.split('.')[:4]))
+            try:
+                forgien_ip_and_port = single_line[4]
+            except IndexError:
+                continue
+            forgien_ip,forgien_port = forgien_ip_and_port.split(":")
             list_of_ips.append(forgien_ip)
-            forgien_port = forgien_ip_and_port.split('.')[4:][0]
             list_of_ports.append(forgien_port)
             hosts_and_ports = dict(zip(list_of_ips, list_of_ports))
     for key, value in hosts_and_ports.iteritems():
         for key in list_of_ips:
+            print value
             host_dict = {}
             # host_ports = []
             host_dict["Host"] = key
